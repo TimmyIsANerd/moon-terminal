@@ -1,11 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
-import TokenLaunchpadAbi from "../abis/TokenLaunchpad.json";
+import { getContractABI } from '../utils/getContractABI';
 import {
   useWeb3ModalProvider,
   useWeb3ModalAccount,
 } from "@web3modal/ethers/react";
 import { BrowserProvider, Contract, Interface } from "ethers";
+
+// Kontrat adreslerini bir obje olarak tanımlayalım
+const CONTRACT_ADDRESSES = {
+  11155111: {  // Sepolia
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  245022926: { // Neon Devnet
+    tokenLaunchpad: "0xF4804d1e6D2504ce37046E971dfFC7F783Fa3070",
+  },
+  545: {      // Flow Testnet
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  2810: {     // Morph Holesky
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  21097: {    // Inco Testnet
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  31: {       // Rootstock Testnet
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  17000: {    // Holesky
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  }
+};
+
+// Add explorer URLs object
+const BLOCK_EXPLORERS = {
+  11155111: "https://sepolia.etherscan.io",  // Sepolia
+  245022926: "https://neon-devnet.blockscout.com", // Neon Devnet
+  545: "https://evm-testnet.flowscan.io", // Flow Testnet
+  2810: "https://explorer.testnet.morphl2.io", // Morph Holesky
+  21097: "https://explorer.rivest.inco.org", // Inco Testnet
+  31: "https://explorer.testnet.rootstock.io", // Rootstock Testnet
+  17000: "https://holesky.etherscan.io" // Holesky
+};
 
 const Create = () => {
   const [formData, setFormData] = useState({
@@ -19,8 +55,107 @@ const Create = () => {
     discordLink: "",
   });
 
+  const [signer, setSigner] = useState(null);
+  const [contract, setContract] = useState(null);
   const { address, chainId, isConnected } = useWeb3ModalAccount();
   const { walletProvider } = useWeb3ModalProvider();
+  const [successModal, setSuccessModal] = useState({
+    isOpen: false,
+    tokenAddress: '',
+    transactionHash: '',
+    blockNumber: '',
+  });
+
+  useEffect(() => {
+    const initializeSigner = async () => {
+      if (isConnected && walletProvider) {
+        try {
+          const provider = new BrowserProvider(walletProvider);
+          const newSigner = await provider.getSigner();
+          console.log("newSigner",newSigner);
+          setSigner(newSigner);
+        } catch (error) {
+          console.error("Failed to initialize signer:", error);
+        }
+      }
+    };
+
+    initializeSigner();
+  }, [isConnected, walletProvider]);
+
+  useEffect(() => {
+    if (signer && chainId) {
+      initializeContract()
+        .then(setContract)
+        .catch(error => {
+          console.error("Contract initialization failed:", error);
+        });
+    }
+  }, [signer, chainId]);
+
+  const initializeContract = async () => {
+    try {
+      const { abi, factoryAddress } = getContractABI(chainId);
+      
+      // For Neon network, use factory contract
+      if (chainId === 245022926 || chainId === 245022934) {
+        return new Contract(
+          factoryAddress,
+          abi,
+          signer
+        );
+      }
+
+      // For other networks, use regular token launchpad
+      const tokenLaunchpadAddress = CONTRACT_ADDRESSES[chainId]?.tokenLaunchpad;
+      if (!tokenLaunchpadAddress) {
+        throw new Error("Contract address not found for this network");
+      }
+
+      return new Contract(
+        tokenLaunchpadAddress,
+        abi,
+        signer
+      );
+    } catch (error) {
+      console.error("Failed to initialize contract:", error);
+      throw error;
+    }
+  };
+
+  const createToken = async (name, symbol) => {
+    try {
+      if (!contract) throw new Error("Contract not initialized");
+      console.log("Creating token with params:", { name, symbol });
+      console.log("Contract methods:", contract.interface.fragments);
+      
+      // Contract'ın createToken fonksiyonunu çağır
+      const tx = await contract.createToken(name, symbol);
+      console.log("Transaction:", tx);
+      
+      const receipt = await tx.wait();
+      console.log("Receipt:", receipt);
+      
+      // Event'i bul
+      const event = receipt.logs.find(log => {
+        try {
+          const parsedLog = contract.interface.parseLog(log);
+          return parsedLog.name === 'TokenCreated';
+        } catch (e) {
+          return false;
+        }
+      });
+      
+      if (!event) throw new Error("Token creation event not found");
+      
+      // Event'ten token adresini al
+      const parsedEvent = contract.interface.parseLog(event);
+      return parsedEvent.args[0]; // token address
+    } catch (error) {
+      console.error("Error creating token:", error);
+      throw error;
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +178,7 @@ const Create = () => {
     imageData.append("files", image);
 
     const response = await fetch(
-      "/api/upload",
+      "http://localhost:1337/api/upload",
       {
         method: "POST",
         body: imageData,
@@ -52,48 +187,6 @@ const Create = () => {
 
     const result = await response.json();
     return result[0].id;
-  };
-
-  const createToken = async (name, symbol) => {
-    try {
-      const provider = new BrowserProvider(walletProvider);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      const tokenLaunchpadAddress =
-        "0x039DDcb7776be78A006F30e79949da53F8691538";
-      const TokenLaunchpad = new Contract(
-        tokenLaunchpadAddress,
-        TokenLaunchpadAbi.abi,
-        signer
-      );
-
-      const tx = await TokenLaunchpad.createToken(name, symbol);
-      const receipt = await tx.wait();
-
-      const eventAbi = [
-        "event TokenCreated(address indexed tokenAddress, string name, string symbol)",
-      ];
-      const iface = new Interface(eventAbi);
-
-      let newTokenAddress;
-      for (let log of receipt.logs) {
-        try {
-          const parsedLog = iface.parseLog(log);
-          if (parsedLog.name === "TokenCreated") {
-            newTokenAddress = parsedLog.args.tokenAddress;
-            console.log("Token Address:", parsedLog.args.tokenAddress);
-            console.log("Name:", parsedLog.args.name);
-            console.log("Symbol:", parsedLog.args.symbol);
-            break;
-          }
-        } catch (e) {
-          // log not parsed
-        }
-      }
-      return newTokenAddress;
-    } catch (error) {
-      console.log(`Error: ${error.message}`);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -122,9 +215,26 @@ const Create = () => {
           }
         );
         const result = await response.json();
-        console.log("Content created:", result);
-      } else {
-        console.error("Token creation failed, no address returned.");
+        
+        // Modal'ı aç ve bilgileri göster
+        setSuccessModal({
+          isOpen: true,
+          tokenAddress: newTokenAddress,
+          transactionHash: result.data.attributes.hash,
+          blockNumber: result.data.attributes.blockNumber,
+        });
+
+        // Form'u temizle
+        setFormData({
+          name: "",
+          ticker: "",
+          description: "",
+          image: null,
+          telegramLink: "",
+          twitterLink: "",
+          websiteLink: "",
+          discordLink: "",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
@@ -358,6 +468,69 @@ const Create = () => {
           </button>
         </div>
       </form>
+
+      {/* Success Modal */}
+      {successModal.isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-slate-800 rounded-xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold text-white mb-4">Token Created Successfully! 🎉</h3>
+            
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm text-slate-400">Token Address:</p>
+                <p className="text-sm text-slate-200 break-all font-mono bg-slate-900 p-2 rounded">
+                  {successModal.tokenAddress}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    const explorerBaseUrl = BLOCK_EXPLORERS[chainId] || "https://testnet.blockscout.com";
+                    window.open(`${explorerBaseUrl}/token/${successModal.tokenAddress}`, '_blank', 'noopener,noreferrer');
+                  }}
+                  className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg 
+                           transition duration-200 flex items-center justify-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  View on Explorer
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSuccessModal({ ...successModal, isOpen: false });
+                    window.open(
+                      `/exchange/${successModal.tokenAddress}?newcreated=true`, 
+                      '_blank', 
+                      'noopener,noreferrer'
+                    );
+                  }}
+                  className="flex-1 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg 
+                           transition duration-200 flex items-center justify-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  View Token Details
+                </button>
+              </div>
+
+              <button
+                onClick={() => setSuccessModal({ ...successModal, isOpen: false })}
+                className="w-full px-4 py-2 mt-4 text-slate-300 hover:text-white 
+                         border border-slate-600 hover:border-slate-500 rounded-lg 
+                         transition duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

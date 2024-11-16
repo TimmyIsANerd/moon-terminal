@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import TokenLaunchpadAbi from "../abis/TokenLaunchpad.json";
 import { createChart, ColorType } from 'lightweight-charts';
 import LoadingBar from 'react-top-loading-bar';
@@ -24,15 +24,39 @@ import tradeData from '../data/tradedata.json';
 
 const tokenPair = [
   {
-    ticker: "$PP",
-    logoUrl:
-      "https://assets.coingecko.com/coins/images/29850/large/pepe-token.jpeg?1696528776",
+    ticker: "",
+    logoUrl: "",
   },
   {
     ticker: "$ETH",
     logoUrl: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
   },
 ];
+
+// Add CONTRACT_ADDRESSES at the top of the file
+const CONTRACT_ADDRESSES = {
+  11155111: {  // Sepolia
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  245022926: { // Neon Devnet
+    tokenLaunchpad: "0xF4804d1e6D2504ce37046E971dfFC7F783Fa3070",
+  },
+  545: {      // Flow Testnet
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  2810: {     // Morph Holesky
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  21097: {    // Inco Testnet
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  31: {       // Rootstock Testnet
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  },
+  17000: {    // Holesky
+    tokenLaunchpad: "0x6D9D03e324aCB65736816478fB14c5186F29E678",
+  }
+};
 
 export const ChartComponent = props => {
   const {
@@ -89,11 +113,49 @@ export const ChartComponent = props => {
 };
 
 const ProjectInfo = () => {
+  const { address } = useParams();
+  const [tokenMetadata, setTokenMetadata] = useState({
+    name: '',
+    description: '',
+    logoUrl: '',
+    ticker: ''
+  });
+
+  useEffect(() => {
+    async function fetchTokenMetadata() {
+      try {
+        const response = await fetch(
+          `http://localhost:1337/api/memes?filters[address][$eq]=${address}&populate=*`
+        );
+        const result = await response.json();
+        
+        if (result.data && result.data.length > 0) {
+          const token = result.data[0].attributes;
+          const defaultLogoUrl = "https://assets.coingecko.com/coins/images/29850/large/pepe-token.jpeg?1696528776";
+          const imageUrl = token.image?.data?.attributes?.url
+            ? `http://localhost:1337${token.image.data.attributes.url}`
+            : defaultLogoUrl;
+
+          setTokenMetadata({
+            name: token.name || 'Unknown Token',
+            description: token.desc || 'No description available',
+            logoUrl: imageUrl,
+            ticker: token.ticker || '???'
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching token metadata:", error);
+      }
+    }
+
+    fetchTokenMetadata();
+  }, [address]);
+
   return (
     <div className="bg-cyan-900/[.09] rounded-xl p-5 border border-[#2dd4bf32]">
-      <h2 className="text-2xl font-bold mb-4">PepeCoin</h2>
+      <h2 className="text-2xl font-bold mb-4">{tokenMetadata.name}</h2>
       <p className="text-gray-300 mb-6">
-        A community-driven meme token powered by the Ethereum blockchain, featuring our beloved Pepe character.
+        {tokenMetadata.description}
       </p>
       
       <div className="flex flex-col gap-2">
@@ -118,20 +180,58 @@ const ProjectInfo = () => {
 };
 
 const PageHeader = () => {
+  const { address } = useParams();
+  const [tokenMetadata, setTokenMetadata] = useState({
+    name: '',
+    description: '',
+    logoUrl: '',
+    ticker: ''
+  });
+
+  useEffect(() => {
+    async function fetchTokenMetadata() {
+      try {
+        const response = await fetch(
+          `http://localhost:1337/api/memes?filters[address][$eq]=${address}&populate=*`
+        );
+        const result = await response.json();
+        
+        if (result.data && result.data.length > 0) {
+          const token = result.data[0].attributes;
+          const defaultLogoUrl = "https://assets.coingecko.com/coins/images/29850/large/pepe-token.jpeg?1696528776";
+          const imageUrl = token.image?.data?.attributes?.url
+            ? `http://localhost:1337${token.image.data.attributes.url}`
+            : defaultLogoUrl;
+
+          setTokenMetadata({
+            name: token.name || 'Unknown Token',
+            description: token.desc || 'No description available',
+            logoUrl: imageUrl,
+            ticker: token.ticker || '???'
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching token metadata:", error);
+      }
+    }
+
+    fetchTokenMetadata();
+  }, [address]);
+
   return (
     <div className="w-4/5 m-auto mt-8 mb-6">
       <div className="flex items-center gap-4 mb-2">
         <img 
-          src={tokenPair[0].logoUrl} 
+          src={tokenMetadata.logoUrl} 
           alt="Token Logo" 
           className="w-12 h-12 rounded-full"
         />
         <div>
           <h1 className="text-3xl font-bold text-white">
-            {projectData.name}
+            {tokenMetadata.name}
           </h1>
           <p className="text-cyan-400">
-            The Most Popular Meme Coin on Ethereum
+            {tokenMetadata.description}
           </p>
         </div>
       </div>
@@ -190,12 +290,33 @@ const Exchange = () => {
   const [totalRaised, setTotalRaised] = useState(0);
   const TARGET_AMOUNT = 5000; // hedef miktar
   const [progress, setProgress] = useState(0);
+  const [tokenMetadata, setTokenMetadata] = useState({
+    name: '',
+    ticker: '',
+    logoUrl: '',
+    description: ''
+  });
+  const [currentTokenPair, setCurrentTokenPair] = useState(tokenPair);
+  const [searchParams] = useSearchParams();
+  const isNewCreated = searchParams.get('newcreated') === 'true';
 
   useEffect(() => {
     setHolders(holdersData.holders);
   }, []);
 
-  const customData = tradeData.customData;
+  // Yeni token için tek yeşil bar
+  const newTokenData = [
+    { 
+      time: new Date().toISOString().split('T')[0], // Bugünün tarihi
+      open: 50,
+      high: 52,
+      low: 48,
+      close: 51 // close > open olduğu için yeşil bar
+    }
+  ];
+
+  // customData'yı koşullu olarak ayarla
+  const customData = isNewCreated ? newTokenData : tradeData.customData;
 
   const handleToken1Change = (e) => {
     const amount = e.target.value;
@@ -207,15 +328,18 @@ const Exchange = () => {
   useEffect(() => {
     async function connectToProvider() {
       try {
-        // Connect to Ethereum provider
         const provider = new BrowserProvider(walletProvider);
         await provider.send("eth_requestAccounts", []);
         const signer = await provider.getSigner();
         setAccount(signer);
-        const tokenLaunchpadAddress =
-          "0x9c670237cfdE371eb6b2C250637d0a13A8b7a281";
-        const tokenAddress = address;
 
+        // Get the correct contract address based on chainId
+        const tokenLaunchpadAddress = CONTRACT_ADDRESSES[chainId]?.tokenLaunchpad;
+        if (!tokenLaunchpadAddress) {
+          throw new Error("Contract address not found for this network");
+        }
+
+        const tokenAddress = address;
         console.log("tokenAddress", tokenAddress);
 
         const TokenLaunchpad = new Contract(
@@ -238,7 +362,7 @@ const Exchange = () => {
     }
 
     connectToProvider();
-  }, [address, walletProvider]);
+  }, [address, walletProvider, chainId]);
 
   const swap = async () => {
     if (swapToggle) {
@@ -254,8 +378,12 @@ const Exchange = () => {
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
 
-      const tokenLaunchpadAddress =
-        "0x9c670237cfdE371eb6b2C250637d0a13A8b7a281";
+      // Get the correct contract address based on chainId
+      const tokenLaunchpadAddress = CONTRACT_ADDRESSES[chainId]?.tokenLaunchpad;
+      if (!tokenLaunchpadAddress) {
+        throw new Error("Contract address not found for this network");
+      }
+
       const tokenAddress = address;
 
       const TokenLaunchpad = new Contract(
@@ -296,8 +424,12 @@ const Exchange = () => {
       await provider.send("eth_requestAccounts", []);
       const signer = await provider.getSigner();
 
-      const tokenLaunchpadAddress =
-        "0x9c670237cfdE371eb6b2C250637d0a13A8b7a281";
+      // Get the correct contract address based on chainId
+      const tokenLaunchpadAddress = CONTRACT_ADDRESSES[chainId]?.tokenLaunchpad;
+      if (!tokenLaunchpadAddress) {
+        throw new Error("Contract address not found for this network");
+      }
+
       const tokenAddress = address;
 
       const TokenLaunchpad = new Contract(
@@ -325,7 +457,7 @@ const Exchange = () => {
   useEffect(() => {
     try {
       setCommentsLoading(true);
-      setComments(commentsData.comments);
+      setComments(isNewCreated ? [] : commentsData.comments);
       setCommentsError(null);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -333,7 +465,7 @@ const Exchange = () => {
     } finally {
       setCommentsLoading(false);
     }
-  }, []);
+  }, [isNewCreated]);
 
   // Trades verilerini yükle
   useEffect(() => {
@@ -353,7 +485,7 @@ const Exchange = () => {
   const renderComments = () => {
     if (commentsLoading) return <p className="text-center mt-4">Loading comments...</p>;
     if (commentsError) return <p className="text-center mt-4 text-red-500">{commentsError}</p>;
-    if (!comments || comments.length === 0) return <p className="text-center mt-4">No comments found</p>;
+    if (!comments || comments.length === 0) return <p className="text-center mt-4">Henüz yorum yapılmadı</p>;
 
     return comments.map((comment) => (
       <div key={comment.id} className="mt-2">
@@ -419,6 +551,46 @@ const Exchange = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    async function fetchTokenMetadata() {
+      try {
+        const response = await fetch(
+          `http://localhost:1337/api/memes?filters[address][$eq]=${address}&populate=*`
+        );
+        const result = await response.json();
+        
+        if (result.data && result.data.length > 0) {
+          const token = result.data[0].attributes;
+          const imageUrl = token.image?.data?.attributes?.url
+            ? `http://localhost:1337${token.image.data.attributes.url}`
+            : "https://cryptologos.cc/logos/ethereum-eth-logo.png"; // fallback image
+
+          setTokenMetadata({
+            name: token.name || 'Unknown Token',
+            description: token.desc || 'No description available',
+            logoUrl: imageUrl,
+            ticker: token.ticker || '???'
+          });
+
+          // Update tokenPair with the fetched data
+          setCurrentTokenPair([
+            {
+              ticker: token.ticker || '???',
+              logoUrl: imageUrl,
+            },
+            tokenPair[1], // Keep ETH data unchanged
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching token metadata:", error);
+      }
+    }
+
+    if (address) {
+      fetchTokenMetadata();
+    }
+  }, [address]);
 
   return (
     <>
@@ -501,7 +673,7 @@ const Exchange = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <img
-                  src={swapToggle ? tokenPair[0].logoUrl : tokenPair[1].logoUrl}
+                  src={swapToggle ? currentTokenPair[0].logoUrl : currentTokenPair[1].logoUrl}
                   alt="Token 1"
                   className="h-6 w-6 mr-2"
                 />
@@ -509,7 +681,7 @@ const Exchange = () => {
                   htmlFor="token1"
                   className="text-sm font-semibold text-foreground"
                 >
-                  {swapToggle ? tokenPair[0].ticker : tokenPair[1].ticker}
+                  {swapToggle ? currentTokenPair[0].ticker : currentTokenPair[1].ticker}
                 </label>
               </div>
               <input
@@ -550,7 +722,7 @@ const Exchange = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <img
-                  src={swapToggle ? tokenPair[1].logoUrl : tokenPair[0].logoUrl}
+                  src={swapToggle ? currentTokenPair[1].logoUrl : currentTokenPair[0].logoUrl}
                   alt="Token 2"
                   className="h-6 w-6 mr-2"
                 />
@@ -558,7 +730,7 @@ const Exchange = () => {
                   htmlFor="token2"
                   className="text-sm font-semibold text-foreground"
                 >
-                  {swapToggle ? tokenPair[1].ticker : tokenPair[0].ticker}
+                  {swapToggle ? currentTokenPair[1].ticker : currentTokenPair[0].ticker}
                 </label>
               </div>
               <input

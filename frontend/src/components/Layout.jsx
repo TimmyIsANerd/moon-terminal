@@ -24,10 +24,22 @@ const Layout = () => {
                         networkData = { name: "Sepolia", chainId };
                         break;
                     case 545:
-                        networkData = { name: "Flow", chainId };
+                        networkData = { name: "Flow Testnet", chainId };
                         break;
                     case 245022926:
-                        networkData = { name: "Neon", chainId };
+                        networkData = { name: "Neon Devnet", chainId };
+                        break;
+                    case 2810:
+                        networkData = { name: "Morph Holesky", chainId };
+                        break;
+                    case 21097:
+                        networkData = { name: "Inco Testnet", chainId };
+                        break;
+                    case 31:
+                        networkData = { name: "Rootstock Testnet", chainId };
+                        break;
+                    case 17000:
+                        networkData = { name: "Holesky", chainId };
                         break;
                     default:
                         networkData = { 

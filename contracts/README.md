@@ -19,6 +19,11 @@ This project demonstrates a basic Hardhat use case. It comes with a sample contr
 - Block Explorer: https://explorer.rivest.inco.org/address/0x6D9D03e324aCB65736816478fB14c5186F29E678#code (Powered by Blockscout)
 - Verification Status: Verified ✅
 
+### Rootstock Testnet
+- Contract Address: `0x6D9D03e324aCB65736816478fB14c5186F29E678`
+- Block Explorer: https://explorer.testnet.rootstock.io/address/0x6D9D03e324aCB65736816478fB14c5186F29E678#code
+- Verification Status: Verified ✅
+
 ### Morph Holesky Testnet
 - Contract Address: `0x6D9D03e324aCB65736816478fB14c5186F29E678`
 

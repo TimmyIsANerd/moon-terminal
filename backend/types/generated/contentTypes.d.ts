@@ -818,6 +818,7 @@ export interface ApiCommentComment extends Schema.CollectionType {
       'api::user-profile.user-profile'
     >;
     commentTime: Attribute.DateTime;
+    address: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -842,6 +843,7 @@ export interface ApiMemeMeme extends Schema.CollectionType {
     singularName: 'meme';
     pluralName: 'memes';
     displayName: 'meme';
+    description: '';
   };
   options: {
     draftAndPublish: false;
@@ -862,6 +864,7 @@ export interface ApiMemeMeme extends Schema.CollectionType {
       'manyToOne',
       'api::user-profile.user-profile'
     >;
+    address: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<'api::meme.meme', 'oneToOne', 'admin::user'> &

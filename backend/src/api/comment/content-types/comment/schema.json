@@ -41,6 +41,9 @@
     },
     "commentTime": {
       "type": "datetime"
+    },
+    "address": {
+      "type": "string"
     }
   }
 }

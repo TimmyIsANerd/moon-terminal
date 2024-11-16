@@ -23,12 +23,20 @@ const sepolia = {
   rpcUrl: `https://eth-sepolia.g.alchemy.com/v2/xANWTQeBRNw4PeeB59zfpVZHP2xNTq8z`,
 };
 
+const holesky = {
+  chainId: 17000,
+  name: "Holesky Testnet",
+  currency: "ETH",
+  explorerUrl: "https://holesky.etherscan.io/",
+  rpcUrl: "https://ethereum-holesky-rpc.publicnode.com",
+};
+
 const flowTestnet = {
   chainId: 545,
   name: "Flow EVM Testnet",
   currency: "FLOW",
   explorerUrl: "https://evm-testnet.flowscan.io",
-  rpcUrl: "https://testnet.evm.nodes.onflow.org", 
+  rpcUrl: "https://testnet.evm.nodes.onflow.org",
 };
 
 const neonDevnet = {
@@ -36,7 +44,31 @@ const neonDevnet = {
   name: "Neon EVM Devnet",
   currency: "NEON",
   explorerUrl: "https://devnet.neonscan.org",
-  rpcUrl: "https://devnet.neonevm.org", 
+  rpcUrl: "https://devnet.neonevm.org",
+};
+
+const morphHolesky = {
+  chainId: 2810,
+  name: "Morph Holesky Testnet",
+  currency: "ETH",
+  explorerUrl: "https://explorer-holesky.morphl2.io",
+  rpcUrl: "https://rpc-quicknode-holesky.morphl2.io",
+};
+
+const incoTestnet = {
+  chainId: 21097,
+  name: "Inco Testnet",
+  currency: "INCO",
+  explorerUrl: "https://explorer.rivest.inco.org",
+  rpcUrl: "https://validator.rivest.inco.org",
+};
+
+const rootstockTestnet = {
+  chainId: 31,
+  name: "Rootstock Testnet",
+  currency: "RBTC",
+  explorerUrl: "https://explorer.testnet.rootstock.io",
+  rpcUrl: "https://public-node.testnet.rsk.co",
 };
 
 // 3. Create a metadata object
@@ -59,7 +91,15 @@ const ethersConfig = defaultConfig({
 // 5. Create a Web3Modal instance
 createWeb3Modal({
   ethersConfig,
-  chains: [sepolia, flowTestnet, neonDevnet], // Add all chains here
+  chains: [
+    sepolia,
+    holesky,
+    flowTestnet,
+    neonDevnet,
+    morphHolesky,
+    incoTestnet,
+    rootstockTestnet
+  ],
   projectId,
   enableAnalytics: true,
 });

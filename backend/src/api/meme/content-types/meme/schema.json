@@ -4,7 +4,8 @@
   "info": {
     "singularName": "meme",
     "pluralName": "memes",
-    "displayName": "meme"
+    "displayName": "meme",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -24,11 +25,12 @@
       "type": "string"
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "comments": {
       "type": "relation",
@@ -41,6 +43,9 @@
       "relation": "manyToOne",
       "target": "api::user-profile.user-profile",
       "inversedBy": "memesTraded"
+    },
+    "address": {
+      "type": "string"
     }
   }
 }
