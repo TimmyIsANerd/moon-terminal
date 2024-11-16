@@ -1,0 +1,54 @@
+{
+    "trades": [
+      {
+        "id": 1,
+        "address": "0xB4B1d7e9E",
+        "fromAmount": "0.023",
+        "fromToken": "ETH",
+        "toAmount": "125004",
+        "toToken": "PP",
+        "timestamp": "2024-01-20T10:30:00Z",
+        "type": "buy"
+      },
+      {
+        "id": 2,
+        "address": "0x7F3a2C8E",
+        "fromAmount": "82000",
+        "fromToken": "PP",
+        "toAmount": "0.015", 
+        "toToken": "ETH",
+        "timestamp": "2024-01-20T10:29:00Z",
+        "type": "sell"
+      },
+      {
+        "id": 3,
+        "address": "0x9B2e5D4f",
+        "fromAmount": "0.05",
+        "fromToken": "ETH",
+        "toAmount": "270000",
+        "toToken": "PP",
+        "timestamp": "2024-01-20T10:28:00Z",
+        "type": "buy"
+      },
+      {
+        "id": 4,
+        "address": "0x1A3fB9cD",
+        "fromAmount": "165000",
+        "fromToken": "PP",
+        "toAmount": "0.031",
+        "toToken": "ETH", 
+        "timestamp": "2024-01-20T10:27:00Z",
+        "type": "sell"
+      },
+      {
+        "id": 5,
+        "address": "0x5E8dA2bF",
+        "fromAmount": "0.068",
+        "fromToken": "ETH",
+        "toAmount": "365000",
+        "toToken": "PP",
+        "timestamp": "2024-01-20T10:26:00Z",
+        "type": "buy"
+      }
+    ]
+  }

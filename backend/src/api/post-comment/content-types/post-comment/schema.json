@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "post_comments",
+  "info": {
+    "singularName": "post-comment",
+    "pluralName": "post-comments",
+    "displayName": "PostComment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "comment": {
+      "type": "string",
+      "required": true
+    },
+    "commentImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "user_profile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-profile.user-profile",
+      "inversedBy": "post_comments"
+    },
+    "commentTime": {
+      "type": "datetime"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+    "customData": [
+      { "time": "2024-01-01", "open": 50, "high": 52, "low": 48, "close": 51 },
+      { "time": "2024-01-02", "open": 51, "high": 53, "low": 50, "close": 52 },
+      { "time": "2024-01-03", "open": 52, "high": 54, "low": 50, "close": 53 },
+      { "time": "2024-01-04", "open": 53, "high": 55, "low": 52, "close": 54 },
+      { "time": "2024-01-05", "open": 54, "high": 56, "low": 53, "close": 55 },
+      { "time": "2024-01-06", "open": 55, "high": 57, "low": 54, "close": 56 },
+      { "time": "2024-01-07", "open": 56, "high": 57, "low": 54, "close": 55 },
+      { "time": "2024-01-08", "open": 55, "high": 56, "low": 53, "close": 54 },
+      { "time": "2024-01-09", "open": 54, "high": 55, "low": 52, "close": 53 },
+      { "time": "2024-01-10", "open": 53, "high": 54, "low": 51, "close": 52 },
+      { "time": "2024-01-11", "open": 52, "high": 54, "low": 50, "close": 53 },
+      { "time": "2024-01-12", "open": 53, "high": 55, "low": 51, "close": 54 },
+      { "time": "2024-01-13", "open": 54, "high": 56, "low": 52, "close": 55 },
+      { "time": "2024-01-14", "open": 55, "high": 57, "low": 53, "close": 56 },
+      { "time": "2024-01-15", "open": 56, "high": 58, "low": 54, "close": 57 },
+      { "time": "2024-01-16", "open": 57, "high": 59, "low": 55, "close": 58 },
+      { "time": "2024-01-17", "open": 58, "high": 60, "low": 56, "close": 59 },
+      { "time": "2024-01-18", "open": 59, "high": 61, "low": 57, "close": 60 },
+      { "time": "2024-01-19", "open": 60, "high": 62, "low": 58, "close": 61 },
+      { "time": "2024-01-20", "open": 61, "high": 63, "low": 59, "close": 62 }
+    ]
+}

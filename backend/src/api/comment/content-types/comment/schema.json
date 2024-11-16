@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "comments",
+  "info": {
+    "singularName": "comment",
+    "pluralName": "comments",
+    "displayName": "TokenComment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "commentImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "comment": {
+      "type": "string",
+      "required": true
+    },
+    "meme": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::meme.meme",
+      "inversedBy": "comments"
+    },
+    "user_profile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-profile.user-profile",
+      "inversedBy": "token_comments"
+    },
+    "commentTime": {
+      "type": "datetime"
+    }
+  }
+}

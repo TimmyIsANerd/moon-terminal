@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "memes",
+  "info": {
+    "singularName": "meme",
+    "pluralName": "memes",
+    "displayName": "meme"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "ticker": {
+      "type": "string"
+    },
+    "desc": {
+      "type": "string"
+    },
+    "telegram": {
+      "type": "string"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "comments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::comment.comment",
+      "mappedBy": "meme"
+    },
+    "user_profile": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-profile.user-profile",
+      "inversedBy": "memesTraded"
+    }
+  }
+}

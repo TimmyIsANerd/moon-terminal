@@ -1,0 +1,40 @@
+{
+    "holders": [
+      {
+        "address": "0xB4B1d7e9",
+        "percentage": 88,
+        "type": "bonding_curve",
+        "emoji": "📈"
+      },
+      {
+        "address": "0x1234Dev",
+        "percentage": 5,
+        "type": "dev",
+        "emoji": "👨‍💻"
+      },
+      {
+        "address": "0xB4B1d7e9",
+        "percentage": 4,
+        "type": "regular",
+        "emoji": "👥"
+      },
+      {
+        "address": "0x3D1f0E94",
+        "percentage": 3,
+        "type": "regular",
+        "emoji": "👥"
+      },
+      {
+        "address": "0xD5F4E1Bc",
+        "percentage": 4,
+        "type": "regular",
+        "emoji": "👥"
+      },
+      {
+        "address": "0xFfB92221",
+        "percentage": 1,
+        "type": "regular",
+        "emoji": "👥"
+      }
+    ]
+  }

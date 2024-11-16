@@ -1,0 +1,17 @@
+{
+    "name": "PepeCoin",
+    "description": "A community-driven meme token powered by the Ethereum blockchain, featuring our beloved Pepe character.",
+    "links": {
+      "website": "https://pepecoin.example.com",
+      "twitter": "https://twitter.com/pepecoin",
+      "telegram": "https://t.me/pepecoin",
+      "discord": "https://discord.gg/pepecoin",
+      "github": "https://github.com/pepecoin"
+    },
+    "tokenomics": {
+      "totalSupply": "1,000,000,000",
+      "circulatingSupply": "750,000,000",
+      "marketCap": "$5,000,000",
+      "initialPrice": "0.00001 ETH"
+    }
+  }

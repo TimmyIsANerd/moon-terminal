@@ -1,0 +1,21 @@
+version: "3.6"
+
+services:
+  db:
+    image: postgres:14-alpine
+    volumes:
+      - db_cms:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=pqdb
+      - POSTGRES_USER=pqdb_user
+      - POSTGRES_PASSWORD=test123123
+    ports:
+      - "5432:5432"
+    networks:
+      - network
+
+networks:
+  network: {}
+
+volumes:
+  db_cms:

@@ -1,0 +1,70 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_profiles",
+  "info": {
+    "singularName": "user-profile",
+    "pluralName": "user-profiles",
+    "displayName": "UserProfile",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "username": {
+      "type": "string",
+      "unique": true,
+      "maxLength": 10
+    },
+    "memesCreated": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::meme.meme",
+      "mappedBy": "user_profile"
+    },
+    "memesTraded": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::meme.meme",
+      "mappedBy": "user_profile"
+    },
+    "token_comments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::comment.comment",
+      "mappedBy": "user_profile"
+    },
+    "address": {
+      "type": "string"
+    },
+    "post_comments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-comment.post-comment",
+      "mappedBy": "user_profile"
+    },
+    "profilePicture": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "user_profile"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "user_profile"
+    }
+  }
+}
