@@ -12,5 +12,5 @@ FROM nginx:1.19
 COPY ./frontend/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 8070
 CMD ["nginx", "-g", "daemon off;"]

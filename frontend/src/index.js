@@ -73,8 +73,8 @@ const rootstockTestnet = {
 
 // 3. Create a metadata object
 const metadata = {
-  name: "EVMeme",
-  description: "EVMeme",
+  name: "MoonTerminal",
+  description: "MoonTerminal",
   url: "https://evmeme.com",
   icons: ["https://avatars.mywebsite.com/"],
 };
@@ -98,7 +98,7 @@ createWeb3Modal({
     neonDevnet,
     morphHolesky,
     incoTestnet,
-    rootstockTestnet
+    rootstockTestnet,
   ],
   projectId,
   enableAnalytics: true,

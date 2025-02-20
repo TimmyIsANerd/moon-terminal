@@ -1,4 +1,4 @@
-# EVMeme - Meme Token Launchpad 
+# MoonTerminal - Meme Token Launchpad 
 This repository demonstrates the deployment of a **Meme Token Launchpad** across multiple EVM-compatible networks. The project includes smart contracts verified on various block explorers and uses **Blockscout Explorer** for all contract interactions.
 
 ## Deployed Contracts

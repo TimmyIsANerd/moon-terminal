@@ -49,3 +49,7 @@ hr {
   --text-light: #CBD5E1;
   --border: #334155;
 }
+
+.debug{
+  border:1px solid red;
+}
